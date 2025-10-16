@@ -1,3 +1,6 @@
 rispy
 pandas
 systematic-reviewpy
+browser-automationpy
+pdftotext
+PyMuPDF
