@@ -4,3 +4,4 @@ systematic-reviewpy
 browser-automationpy
 pdftotext
 PyMuPDF
+ipykernel
