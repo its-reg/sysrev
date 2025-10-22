@@ -3,7 +3,7 @@ This is very much still a work-in-progress.
 
 My current search strategy:
 Ovid MEDLINE(R) ALL <1946 to October 10, 2025>
-
+```
   Search Terms                   Results
 1 Parkinson Disease/             92037
 2 parkinson* disease.ti,ab,kf.   137917
@@ -19,7 +19,7 @@ Ovid MEDLINE(R) ALL <1946 to October 10, 2025>
   information systems).ti,ab,kf. 26623
 7 4 or 5 or 6                    45794
 8 3 and 7                        88
-
+```
 ## Setup virtual environment
 
 Windows (PowerShell):
