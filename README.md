@@ -4,7 +4,7 @@ This is very much still a work-in-progress.
 My current search strategy:
 Ovid MEDLINE(R) ALL <1946 to October 10, 2025>
 
-# Search Terms                   Results
+  Search Terms                   Results
 1 Parkinson Disease/             92037
 2 parkinson* disease.ti,ab,kf.   137917
 3 1 or 2                         152089
