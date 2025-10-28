@@ -1,4 +1,5 @@
-why hello there!
+why hello there! This is my attempt at creating a living, automated systematic review. This would allow me to continually update my literature review as my PhD progresses.
+
 This is very much still a work-in-progress.
 
 My current search strategy:

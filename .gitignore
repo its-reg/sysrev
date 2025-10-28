@@ -13,3 +13,6 @@ dist/
 # Editor directories and files
 .vscode/
 .idea/
+
+# personal files
+.env
