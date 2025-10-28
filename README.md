@@ -63,6 +63,6 @@ For the full environment as used in the notebook kernel, I'll need to add an exp
 - The notebook saves exports locally — add `pubmed_results/` to `.gitignore` if you don't want to commit large datasets.
 - Rewriting git history was used earlier to remove private emails from commits; make sure collaborators update their clones if you force-push history changes.
 
-## Next steps (suggestions)
+## Next steps
 
 I placed it in my notebooks but overall, just getting the search strategy refined and replicable across databases I pick would be pretty good for now.
