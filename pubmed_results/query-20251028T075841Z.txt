@@ -1,0 +1,4 @@
+timestamp: 20251028T075841Z
+max_results: 100
+query:
+(parkinson* disease[title]) AND ((geospatial analysis) OR (pollution)) NOT ((motor) OR (genetic) OR (neurologic) OR (nicotine) OR (smoking) OR (halitosis) OR (disease-like) OR (treatment[title]) OR (neuroprotective[title]) OR (maternal) OR (preventative) OR (therapy))
