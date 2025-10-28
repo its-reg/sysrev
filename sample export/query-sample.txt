@@ -1,0 +1,4 @@
+timestamp: 20251028T075417Z
+max_results: 20
+query:
+"(geospatial analysis) AND (parkinson* disease) NOT (motor)"
