@@ -1,1 +1,0 @@
-from pymed import PubMed
