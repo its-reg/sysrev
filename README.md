@@ -2,7 +2,14 @@
 
 Why hello there! This is my attempt at creating a living, automated systematic review. This notebook-driven project lets you run reproducible PubMed (for now) queries and export results for downstream analysis.
 
-> NOTE: Work in progress.
+**STATUS**: In-Progress
+
+✅ PubMed
+Medline
+Scopus
+Google scholar
+Web of science
+
 
 ## Project structure
 
