@@ -7,8 +7,8 @@ Why hello there! This is my attempt at creating a living, automated systematic r
 ✅ PubMed
 Medline
 Scopus
-Google scholar
-Web of science
+Google Scholar
+Web of Science
 
 
 ## Project structure
