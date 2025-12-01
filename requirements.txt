@@ -3,3 +3,8 @@ pandas
 ipykernel
 pymed
 scikit-learn
+sumy
+nltk
+seaborn
+matplotlib
+plotly
