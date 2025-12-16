@@ -16,3 +16,4 @@ dist/
 
 # personal files
 .env
+config.ini
