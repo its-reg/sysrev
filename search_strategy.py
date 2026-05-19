@@ -72,7 +72,7 @@ EXCLUSION_TERMS = [
 
 DATE_FILTER = {
     "start_date": "2020-01-01",
-    "end_date": None,  # None means no upper limit
+    "end_date": "2025-12-31",  # None would mean no upper limit
     "reason": "5-year window; review justification of recency cutoff",
 }
 
