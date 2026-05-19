@@ -4,18 +4,87 @@ Why hello there! This is my attempt at creating a living, automated systematic r
 
 **STATUS**: In-Progress
 
-✅ PubMed
-Medline
-Scopus
-Google Scholar
-Web of Science
+## 📊 Project Roadmap
 
+### Milestone 1: PubMed Data Collection
+- ✅ Query finalized and validated
+- ✅ Results collected (326 total, 138 in last 5 years)
+- ✅ Data cleaning applied (154 articles after cleaning, 153 after screening)
+- ✅ Exported to CSV: `pubmed_results_cleaned_2025.csv`, `pubmed_results_screened_2025.csv`
+
+**Status**: 100% Complete
+
+---
+
+### Milestone 2: SCOPUS Data Collection
+- ✅ API authentication setup (pybliometrics)
+- ⬜ Query definition (awaiting translation to SCOPUS syntax)
+- ⬜ Results collection
+- ⬜ Data cleaning and export
+- ⬜ Integration with PubMed results
+
+**Status**: 25% Complete — API ready, query needed
+
+---
+
+### Milestone 3: EMBASE Data Collection
+- ⬜ Query strategy design (coordinate with Malcolm and Lukas on pollution/geo terms)
+- ⬜ Database access setup
+- ⬜ Results collection
+- ⬜ Data cleaning and export
+- ⬜ Integration with PubMed + SCOPUS results
+
+**Status**: 0% — Not started. Note: Coordinate term expansion with team.
+
+---
+
+### Milestone 4: Additional Databases
+- ⬜ Google Scholar (manual or scholarly library integration)
+- ⬜ Web of Science (institutional access required)
+
+**Status**: 0% — Pending resource availability
+
+---
+
+### Milestone 5: Study Protocol & Analysis
+- ⏳ Selection criteria refinement
+- ⏳ Duplicate removal across databases
+- ⏳ Formal screening protocol setup
+- ⏳ Risk of bias assessment
+- ⏳ Data extraction and analysis
+
+**Status**: 15% — Screened list created for PubMed; awaiting additional databases
+
+---
+
+## 🔍 Search Strategy
+
+**All search criteria are now centralized in `search_strategy.py`** to ensure consistency across databases.
+
+**Key parameters:**
+- **Date range**: 2020-01-01 onwards (5-year window)
+- **Disease focus**: Parkinson's disease, neurodegenerative disease
+- **Spatial component**: geospatial, spatial dependence, spatiotemporal, geographic terms
+- **Exposure focus**: pollution, chemical, pesticide, air pollution, water pollution, microplastic pollution
+- **Exclusions**: animal models, plant studies, in vitro, molecular, protein studies, mechanistic/treatment-focused research
+
+**Import in notebooks:**
+```python
+from search_strategy import INCLUSION_CRITERIA, EXCLUSION_CRITERIA, DATE_FILTER, DATABASE_CONFIGS
+```
+
+---
 
 ## Project structure
 
-- `pubmed.ipynb` — Jupyter notebook with query, processing, and export cells.
-- `clevon.py` — a reference for the data cleaning from my colleague, Clevon.
-- `pubmed_results/` — directory where exported NDJSON and query metadata files are saved.
+- `search_strategy.py` — **Centralized configuration** with inclusion/exclusion criteria, date filters, and database-specific query syntax. Import this in all notebooks for consistency.
+- `pubmed_pull.ipynb` — Active PubMed query, processing, and export notebook.
+- `pubmed_exploration.ipynb` — Exploratory notebook used to develop and refine the search strategy (NLP-driven term ranking, TF-IDF analysis).
+- `SCOPUS_exploration.ipynb` — In-progress notebook for SCOPUS API setup and query development.
+- `clevon.py` — Reference for data cleaning patterns (e.g., regex-based keyword matching).
+- `pubmed_results_cleaned_2025.csv` — Cleaned PubMed results (154 articles).
+- `pubmed_results_screened_2025.csv` — Screened PubMed results (153 articles).
+- `pubmed_results/` — Directory where exported NDJSON and query metadata files are saved.
 - `requirements.txt` — Python dependencies for the project.
 
 ## Purpose
@@ -72,4 +141,15 @@ For the full environment as used in the notebook kernel, I'll need to add an exp
 
 ## Next steps
 
-I placed it in my notebooks but overall, just getting the search strategy refined and replicable across databases I pick would be pretty good for now.
+1. **SCOPUS query translation** — Convert inclusion/exclusion terms from `search_strategy.py` to SCOPUS field syntax (TITLE-ABS-KEY format) and run query in `SCOPUS_exploration.ipynb`.
+
+2. **EMBASE planning** — Coordinate with Malcolm and Lukas to expand pollution and geographic terms for EMBASE MeSH search. Update `search_strategy.py` once terms are finalized.
+
+3. **Duplicate removal** — Implement cross-database deduplication once SCOPUS and EMBASE results are collected.
+
+4. **Formal screening protocol** — Set up structured screening workflow (title/abstract review, full-text review, risk of bias assessment).
+
+5. **Environment documentation** — Generate `environment.yml` from current notebook kernel packages for reproducibility.
+
+**Meeting notes:** Margaret reviewed the study direction and search terms (see `pubmed_pull.ipynb` for notes).
+
