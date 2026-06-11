@@ -25,8 +25,9 @@ in-development LLM pre-screening step using a local Ollama model (offline, no AP
 
 ### Milestone 3: Additional Databases
 - ⏳ SCOPUS — API ready via `pybliometrics`; query translation to SCOPUS syntax pending
+- ⏳ Google Scholar — in progress via `scholarly` (see `google_scholar.ipynb`); supplementary source only
 - ⬜ EMBASE — coordinate pollution/geo terms with Malcolm & Lukas
-- ⬜ Google Scholar / Web of Science — pending access
+- ⬜ Web of Science — pending institutional access
 
 ### Milestone 4: Analysis & Protocol
 - ⬜ Cross-database deduplication
@@ -54,6 +55,7 @@ All criteria live in [`search_strategy.py`](search_strategy.py) — edit there t
 ```
 search_strategy.py          — centralized inclusion/exclusion criteria and DB configs
 pubmed.ipynb                — PubMed collection, cleaning, NLP term analysis
+google_scholar.ipynb        — Google Scholar collection via scholarly (supplementary)
 prescreen.ipynb             — (planned) Ollama LLM pre-screening of records
 SCOPUS_exploration.ipynb    — SCOPUS API setup and query development (in progress)
 pubmed_results_cleaned_2026.csv  — cleaned PubMed results (411 articles)
@@ -76,7 +78,11 @@ pip install -r requirements.txt
    `search_strategy.py`, fetches and cleans results, exports to CSV, and runs the TF-IDF
    term-ranking analysis.
 
-2. **Pre-screening** — run `prescreen.ipynb` (in development). It loads the cleaned CSV,
+2. **Google Scholar (supplementary)** — run `google_scholar.ipynb`. Uses the `scholarly`
+   package to scrape Scholar (no API key needed). Note: Google rate-limits scrapers, so
+   results may be partial without a proxy — the notebook handles this gracefully.
+
+3. **Pre-screening** — run `prescreen.ipynb` (in development). It loads the cleaned CSV,
    sends each title + abstract to a local Ollama model, and outputs include/exclude decisions
    with rationale. No API key or internet connection required.
 

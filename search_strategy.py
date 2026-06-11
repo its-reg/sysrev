@@ -119,7 +119,15 @@ DATABASE_CONFIGS = {
         "fields": {"title_abstract": ".ti,ab."},
         "status": "not started — coordinate pollution/geo terms with Malcolm & Lukas",
     },
-    "google_scholar": {"status": "not started — manual or scholarly library"},
+    "google_scholar": {
+        "client": "scholarly",
+        "query_note": (
+            "Flat OR-joined string — no boolean NOT or field specifiers supported. "
+            "Exclusion terms applied post-hoc on title/abstract. "
+            "Year range passed via year_low/year_high parameters."
+        ),
+        "status": "in progress — scholarly (see google_scholar.ipynb)",
+    },
     "web_of_science": {"status": "not started — institutional access required"},
 }
 
