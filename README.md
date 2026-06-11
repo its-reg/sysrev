@@ -1,155 +1,94 @@
-# Systematic Review
+# Systematic Review: Geographic & Environmental Risk Factors in Parkinson's Disease
 
-Why hello there! This is my attempt at creating a living, automated systematic review. This notebook-driven project lets me run reproducible queries and export results for downstream analysis.
+This project automates a systematic review of the 2020–2025 literature on geographic and
+environmental risk factors associated with Parkinson's disease (PD). Environmental exposures
+such as air pollutants (nitrogen dioxide, PM10) and chemicals like trichloroethylene have been
+implicated in elevated PD risk, yet the literature remains fragmented. The pipeline covers
+automated API-based database querying, NLP-driven search refinement (TF-IDF), and an
+in-development LLM pre-screening step using a local Ollama model (offline, no API key required).
 
-**STATUS**: In-Progress
-
-## 📊 Project Roadmap
-
-### Milestone 1: PubMed Data Collection
-- ✅ Query finalized and validated
-- ✅ Results collected (326 total, 138 in last 5 years)
-- ✅ Data cleaning applied (154 articles after cleaning, 153 after screening)
-- ✅ Exported to CSV: `pubmed_results_cleaned_2025.csv`, `pubmed_results_screened_2025.csv`
-
-**Status**: 100% Complete
+**STATUS**: In-Progress — PubMed collection and NLP complete; LLM pre-screening in development.
 
 ---
 
-### Milestone 2: SCOPUS Data Collection
-- ✅ API authentication setup (pybliometrics)
-- ⬜ Query definition (awaiting translation to SCOPUS syntax)
-- ⬜ Results collection
-- ⬜ Data cleaning and export
-- ⬜ Integration with PubMed results
+## Roadmap
 
-**Status**: 25% Complete — API ready, query needed
+### Milestone 1: PubMed Collection & NLP
+- ✅ Search strategy defined in `search_strategy.py`
+- ✅ Results collected via PubMed API — 411 articles cleaned (`pubmed_results_cleaned_2026.csv`)
+- ✅ NLP pipeline (TF-IDF + n-gram ranking) identifies key terms and informs query expansion
 
----
+### Milestone 2: LLM Pre-screening *(in development)*
+- ⏳ Local Ollama model classifies each record (title + abstract) against inclusion/exclusion criteria
+- ⬜ Outputs a `screened` flag and rationale per article
+- ⬜ Human review of borderline cases
 
-### Milestone 3: EMBASE Data Collection
-- ⬜ Query strategy design (coordinate with Malcolm and Lukas on pollution/geo terms)
-- ⬜ Database access setup
-- ⬜ Results collection
-- ⬜ Data cleaning and export
-- ⬜ Integration with PubMed + SCOPUS results
+### Milestone 3: Additional Databases
+- ⏳ SCOPUS — API ready via `pybliometrics`; query translation to SCOPUS syntax pending
+- ⬜ EMBASE — coordinate pollution/geo terms with Malcolm & Lukas
+- ⬜ Google Scholar / Web of Science — pending access
 
-**Status**: 0% — Not started. Note: Coordinate term expansion with team.
-
----
-
-### Milestone 4: Additional Databases
-- ⬜ Google Scholar (manual or scholarly library integration)
-- ⬜ Web of Science (institutional access required)
-
-**Status**: 0% — Pending resource availability
+### Milestone 4: Analysis & Protocol
+- ⬜ Cross-database deduplication
+- ⬜ Formal screening protocol (title/abstract → full-text → risk of bias)
+- ⬜ Data extraction and synthesis
 
 ---
 
-### Milestone 5: Study Protocol & Analysis
-- ⏳ Selection criteria refinement
-- ⏳ Duplicate removal across databases
-- ⏳ Formal screening protocol setup
-- ⏳ Risk of bias assessment
-- ⏳ Data extraction and analysis
+## Search Strategy
 
-**Status**: 15% — Screened list created for PubMed; awaiting additional databases
+All criteria live in [`search_strategy.py`](search_strategy.py) — edit there to keep every notebook in sync.
+
+| Parameter | Summary |
+|---|---|
+| Date range | 2020-01-01 to 2025-12-31 |
+| Disease | Parkinson's disease, neurodegenerative disease (+ NLP-expanded alternates) |
+| Spatial | geospatial, spatiotemporal, geographic, environment*, atmospheric, … |
+| Exposure | pollution, air pollution, pesticide, particulate matter, NO2, trichloroethylene, … |
+| Exclusions | animal/in vitro/molecular studies; treatment/therapy-focused research |
 
 ---
 
-## 🔍 Search Strategy
+## Project Structure
 
-**All search criteria are now centralized in `search_strategy.py`** to ensure consistency across databases.
-
-**Key parameters:**
-- **Date range**: 2020-01-01 onwards (5-year window)
-- **Disease focus**: Parkinson's disease, neurodegenerative disease
-- **Spatial component**: geospatial, spatial dependence, spatiotemporal, geographic terms
-- **Exposure focus**: pollution, chemical, pesticide, air pollution, water pollution, microplastic pollution
-- **Exclusions**: animal models, plant studies, in vitro, molecular, protein studies, mechanistic/treatment-focused research
-
-**Import in notebooks:**
-```python
-from search_strategy import INCLUSION_CRITERIA, EXCLUSION_TERMS, DATE_FILTER, DATABASE_CONFIGS
+```
+search_strategy.py          — centralized inclusion/exclusion criteria and DB configs
+pubmed.ipynb                — PubMed collection, cleaning, NLP term analysis
+prescreen.ipynb             — (planned) Ollama LLM pre-screening of records
+SCOPUS_exploration.ipynb    — SCOPUS API setup and query development (in progress)
+pubmed_results_cleaned_2026.csv  — cleaned PubMed results (411 articles)
+requirements.txt            — Python dependencies
+archive/                    — superseded notebooks (pubmed_pull, pubmed_exploration)
 ```
 
 ---
 
-## Project structure
+## How to Run
 
-- `search_strategy.py` — **Centralized configuration** with inclusion/exclusion criteria, date filters, and database-specific query syntax. Import this in all notebooks for consistency.
-- `pubmed.ipynb` — **Consolidated PubMed pipeline**: builds the query from `search_strategy.py`, collects articles meeting the criteria, cleans/exports them, and runs the NLP (TF-IDF + n-gram) analysis to identify key terms.
-- `SCOPUS_exploration.ipynb` — In-progress notebook for SCOPUS API setup and query development.
-- `archive/` — Previous PubMed notebooks kept for reference and version control (`pubmed_pull.ipynb`, `pubmed_exploration.ipynb`), now superseded by `pubmed.ipynb`.
-- `clevon.py` — Reference for data cleaning patterns (e.g., regex-based keyword matching).
-- `pubmed_results_cleaned_2025.csv` — Cleaned PubMed results (154 articles).
-- `pubmed_results_screened_2025.csv` — Screened PubMed results (153 articles).
-- `requirements.txt` — Python dependencies for the project.
-
-## Purpose
-
-Automate queries (via `pymed`, etc) and collect article metadata into NDJSON files. Convert NDJSON into pandas DataFrames for cleaning, analysis, and export. Keep query metadata (timestamp and query string) with each export for reproducibility.
-
-## How to run
-
-1. Create a `.env` file in the project root with your PubMed contact email (this is used by `pymed`):
-
-```
-PUBMED_EMAIL=your-email@example.com
-```
-
-2. (Optional) Create and activate a virtual environment and install dependencies:
+**Prerequisites:** Python 3, a `.env` file with `PUBMED_EMAIL=your@email.com`,
+and [Ollama](https://ollama.ai) installed locally for the pre-screening step.
 
 ```bash
-python -m venv .venv
-source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-3. Open and run `pubmed.ipynb` in Jupyter top-to-bottom. The notebook:
-   - builds the boolean query from `search_strategy.py`,
-   - fetches results from PubMed and filters them to the configured date window,
-   - cleans the results (deduplicate titles, require PubMed ID and DOI),
-   - exports the cleaned set to `pubmed_results_cleaned_2025.csv`, and
-   - runs the NLP analysis (TF-IDF + n-gram ranking) to surface and visualise the key terms.
+1. **Collection & NLP** — run `pubmed.ipynb` top-to-bottom. It builds the query from
+   `search_strategy.py`, fetches and cleans results, exports to CSV, and runs the TF-IDF
+   term-ranking analysis.
 
-4. To adjust what gets collected, edit the criteria in `search_strategy.py` — the query, date
-   filter, and cleaning rules are all driven from there.
+2. **Pre-screening** — run `prescreen.ipynb` (in development). It loads the cleaned CSV,
+   sends each title + abstract to a local Ollama model, and outputs include/exclude decisions
+   with rationale. No API key or internet connection required.
 
-## Packages used
+3. **Adjust the search** — edit `search_strategy.py` (`INCLUSION_CRITERIA`, `ALTERNATE_TERMS`,
+   `EXCLUSION_TERMS`, `DATE_FILTER`) and re-run step 1.
 
-This project lists the following dependencies in `requirements.txt`:
+---
 
-```
-python-dotenv
-pandas
-ipykernel
-pymed
-```
+## Next Steps
 
-In the running notebook environment, other useful packages are installed (for completeness):
-- `python-dotenv` — loads `.env` into environment variables
-- `pandas` — data analysis and DataFrame handling
-- `pymed` — PubMed client used for querying
-
-For the full environment as used in the notebook kernel, I'll need to add an explicit `environment.yml` or `requirements-full.txt` containing the kernel packages. Be patient with me lol
-
-## Notes & safety
-
-- The notebook saves exports locally — add `pubmed_results/` to `.gitignore` if you don't want to commit large datasets.
-- Rewriting git history was used earlier to remove private emails from commits; make sure collaborators update their clones if you force-push history changes.
-
-## Next steps
-
-1. **SCOPUS query translation** — Convert inclusion/exclusion terms from `search_strategy.py` to SCOPUS field syntax (TITLE-ABS-KEY format) and run query in `SCOPUS_exploration.ipynb`.
-
-2. **EMBASE planning** — Coordinate with Malcolm and Lukas to expand pollution and geographic terms for EMBASE MeSH search. Update `search_strategy.py` once terms are finalized.
-
-3. **Duplicate removal** — Implement cross-database deduplication once SCOPUS and EMBASE results are collected.
-
-4. **Formal screening protocol** — Set up structured screening workflow (title/abstract review, full-text review, risk of bias assessment).
-
-5. **Environment documentation** — Generate `environment.yml` from current notebook kernel packages for reproducibility.
-
-**Meeting notes:** Margaret reviewed the study direction and search terms (see `pubmed_pull.ipynb` for notes).
-
+1. **LLM pre-screening** — implement `prescreen.ipynb` with Ollama for PubMed results.
+2. **SCOPUS query** — translate `search_strategy.py` terms to SCOPUS `TITLE-ABS-KEY` syntax.
+3. **EMBASE** — expand pollution/geo terms with Malcolm & Lukas; set up database access.
+4. **Deduplication** — merge and deduplicate across databases once SCOPUS/EMBASE are queried.
+5. **Screening protocol** — formal title/abstract and full-text review workflow.
