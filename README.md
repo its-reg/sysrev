@@ -70,7 +70,7 @@ Why hello there! This is my attempt at creating a living, automated systematic r
 
 **Import in notebooks:**
 ```python
-from search_strategy import INCLUSION_CRITERIA, EXCLUSION_CRITERIA, DATE_FILTER, DATABASE_CONFIGS
+from search_strategy import INCLUSION_CRITERIA, EXCLUSION_TERMS, DATE_FILTER, DATABASE_CONFIGS
 ```
 
 ---
@@ -78,13 +78,12 @@ from search_strategy import INCLUSION_CRITERIA, EXCLUSION_CRITERIA, DATE_FILTER,
 ## Project structure
 
 - `search_strategy.py` — **Centralized configuration** with inclusion/exclusion criteria, date filters, and database-specific query syntax. Import this in all notebooks for consistency.
-- `pubmed_pull.ipynb` — Active PubMed query, processing, and export notebook.
-- `pubmed_exploration.ipynb` — Exploratory notebook used to develop and refine the search strategy (NLP-driven term ranking, TF-IDF analysis).
+- `pubmed.ipynb` — **Consolidated PubMed pipeline**: builds the query from `search_strategy.py`, collects articles meeting the criteria, cleans/exports them, and runs the NLP (TF-IDF + n-gram) analysis to identify key terms.
 - `SCOPUS_exploration.ipynb` — In-progress notebook for SCOPUS API setup and query development.
+- `archive/` — Previous PubMed notebooks kept for reference and version control (`pubmed_pull.ipynb`, `pubmed_exploration.ipynb`), now superseded by `pubmed.ipynb`.
 - `clevon.py` — Reference for data cleaning patterns (e.g., regex-based keyword matching).
 - `pubmed_results_cleaned_2025.csv` — Cleaned PubMed results (154 articles).
 - `pubmed_results_screened_2025.csv` — Screened PubMed results (153 articles).
-- `pubmed_results/` — Directory where exported NDJSON and query metadata files are saved.
 - `requirements.txt` — Python dependencies for the project.
 
 ## Purpose
@@ -107,14 +106,15 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-3. Open and run `pubmed.ipynb` in Jupyter. The notebook contains cells to:
-   - build the query string,
-   - fetch results from PubMed,
-   - convert results to a reusable list,
-   - export NDJSON files into `pubmed_results/` (timestamped), and
-   - parse the latest NDJSON into a pandas DataFrame for inspection.
+3. Open and run `pubmed.ipynb` in Jupyter top-to-bottom. The notebook:
+   - builds the boolean query from `search_strategy.py`,
+   - fetches results from PubMed and filters them to the configured date window,
+   - cleans the results (deduplicate titles, require PubMed ID and DOI),
+   - exports the cleaned set to `pubmed_results_cleaned_2025.csv`, and
+   - runs the NLP analysis (TF-IDF + n-gram ranking) to surface and visualise the key terms.
 
-4. After running the export cell, NDJSON files and a `query-<timestamp>.txt` describing the query are written to `pubmed_results/`.
+4. To adjust what gets collected, edit the criteria in `search_strategy.py` — the query, date
+   filter, and cleaning rules are all driven from there.
 
 ## Packages used
 
