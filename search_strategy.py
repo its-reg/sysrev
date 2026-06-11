@@ -20,6 +20,7 @@ SPATIAL_TERMS = [
     "geographic",
     "environment*",
     "atmospheric",
+    "spatial analysis",
 ]
 
 EXPOSURE_TERMS = [
@@ -162,6 +163,11 @@ ALTERNATE_TERMS = {
     "disease": [
         "movement disorders",
         "extrapyramidal disorders",
+        # NLP-suggested (see NLP_SUGGESTED_EXPANSIONS):
+        "dementia",
+        "alzheimer disease",
+        "cognitive impairment",
+        "amyotrophic lateral sclerosis",
     ],
     "spatial": [
         "spatial analysis",
@@ -176,6 +182,56 @@ ALTERNATE_TERMS = {
         "occupational exposure",
         "heavy metals",
         "pesticide exposure",
+        # NLP-suggested (see NLP_SUGGESTED_EXPANSIONS):
+        "particulate matter",
+        "nitrogen dioxide",
+        "ambient air pollution",
+        "long-term exposure",
+        "air pollution exposure",
+    ],
+}
+
+# ============================================================================
+# NLP-SUGGESTED EXPANSION TERMS
+# ============================================================================
+# Raw output of suggest_expansions() from pubmed.ipynb, captured here for
+# provenance. These are the highest-scoring candidate n-grams (blend of TF-IDF
+# importance and raw frequency) found in the cleaned PubMed corpus that are NOT
+# already in the query. I use them to inform sensitivity analyses and query
+# refinement. The domain-relevant ones have been folded into ALTERNATE_TERMS
+# above; generic methodology terms (e.g. "study", "review", "meta analysis",
+# "95 ci") are retained here for transparency but are not search-worthy.
+
+NLP_SUGGESTED_EXPANSIONS = {
+    "source": "pubmed.ipynb -> suggest_expansions()",
+    "corpus": "pubmed_results_cleaned_2025.csv (154 documents)",
+    "method": "TF-IDF (0.7) + normalized frequency (0.3) over 1-3 grams, min_count=2",
+    # Default call: suggest_expansions(n=20, min_count=2)
+    "top_20": [
+        "exposure", "air", "parkinson", "risk", "dementia", "study", "factors",
+        "environmental", "neurodegenerative", "association", "studies",
+        "pesticides", "diseases", "alzheimer", "particulate", "term",
+        "associated", "review", "analysis", "matter",
+    ],
+    # By n-gram length, for readability
+    "unigrams": [
+        "exposure", "air", "parkinson", "risk", "dementia", "study", "factors",
+        "environmental", "neurodegenerative", "association", "studies",
+        "pesticides", "diseases", "alzheimer", "particulate",
+    ],
+    "bigrams": [
+        "alzheimer disease", "long term", "particulate matter", "disease pd",
+        "pesticide exposure", "95 ci", "neurodegenerative diseases",
+        "risk factors", "environmental factors", "term exposure",
+        "meta analysis", "systematic review", "cognitive impairment",
+        "nitrogen dioxide", "pd risk",
+    ],
+    "trigrams": [
+        "parkinson disease pd", "long term exposure", "disease parkinson disease",
+        "ambient air pollution", "air pollution parkinson",
+        "air pollution exposure", "amyotrophic lateral sclerosis",
+        "pollution parkinson disease", "case control study",
+        "particulate matter pm",
     ],
 }
 

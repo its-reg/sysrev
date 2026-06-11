@@ -8,4 +8,5 @@ nltk
 seaborn
 matplotlib
 plotly
+nbformat
 pybliometrics
