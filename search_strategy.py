@@ -5,7 +5,7 @@ Single source of truth for the systematic review search strategy.
 Every database notebook imports from here — edit terms here, nowhere else.
 
 Query structure:  (disease) AND (spatial) AND (exposure) NOT (exclusions)
-
+ 
 Sections
 --------
 1.  Core inclusion criteria       — manually defined, peer-reviewed
