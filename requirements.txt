@@ -11,4 +11,5 @@ plotly
 nbformat
 scholarly
 pybliometrics
+elsapy
 requests
