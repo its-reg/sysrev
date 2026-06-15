@@ -7,7 +7,8 @@ implicated in elevated PD risk, yet the literature remains fragmented. The pipel
 automated API-based database querying, NLP-driven search refinement (TF-IDF), and an
 in-development LLM pre-screening step using a local Ollama model (offline, no API key required).
 
-**STATUS**: In-Progress — PubMed collection and NLP complete; LLM pre-screening in development.
+**STATUS**: In-Progress — PubMed collection and NLP complete; additional-database pipelines
+(SCOPUS, EMBASE, Web of Science) built and pending data-access runs; LLM pre-screening in development.
 
 ---
 
@@ -24,10 +25,10 @@ in-development LLM pre-screening step using a local Ollama model (offline, no AP
 - ⬜ Human review of borderline cases
 
 ### Milestone 3: Additional Databases
-- ⏳ SCOPUS — API ready via `pybliometrics`; query translation to SCOPUS syntax pending
+- ⏳ SCOPUS — pipeline built in `scopus.ipynb` (`pybliometrics`, `TITLE-ABS-KEY` query); needs a full run on an institutional token for abstracts
 - ⏳ Google Scholar — in progress via `scholarly` (see `google_scholar.ipynb`); supplementary source only
-- ⬜ EMBASE — coordinate pollution/geo terms with Malcolm & Lukas
-- ⬜ Web of Science — pending institutional access
+- ⏳ EMBASE — query builder + export loader in `embase.ipynb`; no open API, so it uses a manual Embase/Ovid export workflow (coordinate Emtree terms with Malcolm & Lukas)
+- ⏳ Web of Science — pipeline built in `web_of_science.ipynb` (WoS Starter API, `TS=()` query); pending institutional API key
 
 ### Milestone 4: Analysis & Protocol
 - ⬜ Cross-database deduplication
@@ -56,8 +57,11 @@ All criteria live in [`search_strategy.py`](search_strategy.py) — edit there t
 search_strategy.py          — centralized inclusion/exclusion criteria and DB configs
 pubmed.ipynb                — PubMed collection, cleaning, NLP term analysis
 google_scholar.ipynb        — Google Scholar collection via scholarly (supplementary)
+scopus.ipynb                — SCOPUS collection via pybliometrics (TITLE-ABS-KEY query)
+embase.ipynb                — EMBASE query builder + RIS/CSV export loader (manual export workflow)
+web_of_science.ipynb        — Web of Science collection via the WoS Starter API (TS= query)
 prescreen.ipynb             — (planned) Ollama LLM pre-screening of records
-SCOPUS_exploration.ipynb    — SCOPUS API setup and query development (in progress)
+SCOPUS_exploration.ipynb    — early SCOPUS API setup scratchpad (superseded by scopus.ipynb)
 pubmed_results_cleaned_2026.csv  — cleaned PubMed results (411 articles)
 requirements.txt            — Python dependencies
 archive/                    — superseded notebooks (pubmed_pull, pubmed_exploration)
@@ -67,8 +71,10 @@ archive/                    — superseded notebooks (pubmed_pull, pubmed_explor
 
 ## How to Run
 
-**Prerequisites:** Python 3, a `.env` file with `PUBMED_EMAIL=your@email.com`,
-and [Ollama](https://ollama.ai) installed locally for the pre-screening step.
+**Prerequisites:** Python 3, a `.env` file with `PUBMED_EMAIL=your@email.com` (and
+`WOS_API_KEY=...` once Web of Science access is granted), a configured Elsevier API key for
+SCOPUS (`pybliometrics.init()`), and [Ollama](https://ollama.ai) installed locally for the
+pre-screening step.
 
 ```bash
 pip install -r requirements.txt
@@ -82,19 +88,33 @@ pip install -r requirements.txt
    package to scrape Scholar (no API key needed). Note: Google rate-limits scrapers, so
    results may be partial without a proxy — the notebook handles this gracefully.
 
-3. **Pre-screening** — run `prescreen.ipynb` (in development). It loads the cleaned CSV,
+3. **SCOPUS** — run `scopus.ipynb`. It builds the `TITLE-ABS-KEY` query from `search_strategy.py`,
+   queries the SCOPUS API via `pybliometrics`, cleans, and exports `scopus_results_2026.csv`.
+   Use the `COMPLETE` view on an institutional token to also capture abstracts.
+
+4. **EMBASE** — run `embase.ipynb`. EMBASE has no open API, so the notebook prints the query in
+   Ovid (`.ti,ab.`) and Embase.com (`:ti,ab`) syntax to paste into the platform, then loads the
+   exported RIS/CSV back into the shared schema and exports `embase_results_2026.csv`.
+
+5. **Web of Science** — run `web_of_science.ipynb`. It builds the `TS=()` query, pages through the
+   WoS Starter API (reads `WOS_API_KEY` from `.env`), cleans, and exports
+   `web_of_science_results_2026.csv`.
+
+6. **Pre-screening** — run `prescreen.ipynb` (in development). It loads the cleaned CSV,
    sends each title + abstract to a local Ollama model, and outputs include/exclude decisions
    with rationale. No API key or internet connection required.
 
-3. **Adjust the search** — edit `search_strategy.py` (`INCLUSION_CRITERIA`, `ALTERNATE_TERMS`,
-   `EXCLUSION_TERMS`, `DATE_FILTER`) and re-run step 1.
+7. **Adjust the search** — edit `search_strategy.py` (`INCLUSION_CRITERIA`, `ALTERNATE_TERMS`,
+   `EXCLUSION_TERMS`, `DATE_FILTER`) and re-run the affected collection notebooks. Every database
+   notebook imports from `search_strategy.py`, so one edit keeps them all in sync.
 
 ---
 
 ## Next Steps
 
 1. **LLM pre-screening** — implement `prescreen.ipynb` with Ollama for PubMed results.
-2. **SCOPUS query** — translate `search_strategy.py` terms to SCOPUS `TITLE-ABS-KEY` syntax.
-3. **EMBASE** — expand pollution/geo terms with Malcolm & Lukas; set up database access.
-4. **Deduplication** — merge and deduplicate across databases once SCOPUS/EMBASE are queried.
-5. **Screening protocol** — formal title/abstract and full-text review workflow.
+2. **SCOPUS run** — execute `scopus.ipynb` on an institutional token (`COMPLETE` view) to capture abstracts.
+3. **EMBASE** — expand pollution/geo + Emtree terms with Malcolm & Lukas; secure Embase/Ovid access, then run the export through `embase.ipynb`.
+4. **Web of Science** — obtain the institutional `WOS_API_KEY` and run `web_of_science.ipynb`.
+5. **Deduplication** — merge and deduplicate across all databases once SCOPUS/EMBASE/WoS are queried.
+6. **Screening protocol** — formal title/abstract and full-text review workflow.

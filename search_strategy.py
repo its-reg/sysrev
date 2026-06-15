@@ -113,11 +113,17 @@ DATABASE_CONFIGS = {
         "client": "pybliometrics",
         "fields": {"title_abstract_keyword": "TITLE-ABS-KEY()"},
         "date_syntax": "PUBYEAR > {year}",
-        "status": "TODO: translate terms to SCOPUS syntax",
+        "status": "in progress — pybliometrics (see scopus.ipynb)",
     },
     "embase": {
-        "fields": {"title_abstract": ".ti,ab."},
-        "status": "not started — coordinate pollution/geo terms with Malcolm & Lukas",
+        "client": "requests (Embase Search API)",
+        "fields": {"title_abstract": ":ti,ab"},
+        "date_syntax": "[{start}-{end}]/py",
+        "status": (
+            "in progress — Embase Search API (see embase.ipynb); "
+            "requires ELSEVIER_API_KEY (+ ELSEVIER_INSTTOKEN off-campus) in .env; "
+            "coordinate Emtree terms with Malcolm & Lukas"
+        ),
     },
     "google_scholar": {
         "client": "scholarly",
@@ -128,7 +134,12 @@ DATABASE_CONFIGS = {
         ),
         "status": "in progress — scholarly (see google_scholar.ipynb)",
     },
-    "web_of_science": {"status": "not started — institutional access required"},
+    "web_of_science": {
+        "client": "requests (WoS Starter API)",
+        "fields": {"topic": "TS()"},
+        "date_syntax": "PY=({start}-{end})",
+        "status": "in progress — WoS Starter API (see web_of_science.ipynb); institutional API key required",
+    },
 }
 
 # --- Query results log (informational) --------------------------------------
@@ -137,4 +148,5 @@ QUERY_RESULTS = {
                "after_screening": 153, "date_queried": "2025-04-22"},
     "scopus": {"status": "not yet queried"},
     "embase": {"status": "not yet queried"},
+    "web_of_science": {"status": "not yet queried"},
 }
