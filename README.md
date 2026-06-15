@@ -1,120 +1,78 @@
 # Systematic Review: Geographic & Environmental Risk Factors in Parkinson's Disease
 
-This project automates a systematic review of the 2020–2025 literature on geographic and
-environmental risk factors associated with Parkinson's disease (PD). Environmental exposures
-such as air pollutants (nitrogen dioxide, PM10) and chemicals like trichloroethylene have been
-implicated in elevated PD risk, yet the literature remains fragmented. The pipeline covers
-automated API-based database querying, NLP-driven search refinement (TF-IDF), and an
-in-development LLM pre-screening step using a local Ollama model (offline, no API key required).
+Automated pipeline for a systematic review of the 2020–2025 literature on geographic and environmental risk factors in Parkinson's disease (PD) — air pollutants, pesticides, heavy metals, trichloroethylene, and related exposures.
 
-**STATUS**: In-Progress — PubMed collection and NLP complete; additional-database pipelines
-(SCOPUS, EMBASE, Web of Science) built and pending data-access runs; LLM pre-screening in development.
+**STATUS**: In progress — PubMed done; seed set collected and search strategy refinement underway; SCOPUS/EMBASE/WoS pipelines built and pending access runs.
 
 ---
 
 ## Roadmap
 
-### Milestone 1: PubMed Collection & NLP
-- ✅ Search strategy defined in `search_strategy.py`
-- ✅ Results collected via PubMed API — 411 articles cleaned (`pubmed_results_cleaned_2026.csv`)
-- ✅ NLP pipeline (TF-IDF + n-gram ranking) identifies key terms and informs query expansion
+### Milestone 1: PubMed Collection & NLP ✅
+- Search strategy defined in `search_strategy.py` (single source of truth for all databases)
+- 411 articles collected and cleaned via PubMed API → `pubmed_results_cleaned_2026.csv`
+- TF-IDF + n-gram analysis surfaces key terms and feeds into query expansion
 
-### Milestone 2: LLM Pre-screening *(in development)*
-- ⏳ Local Ollama model classifies each record (title + abstract) against inclusion/exclusion criteria
-- ⬜ Outputs a `screened` flag and rationale per article
-- ⬜ Human review of borderline cases
+### Milestone 2: Seed Set & Search Strategy Refinement ⏳
+- 55 confirmed-relevant papers collected in `seed_papers/`; metadata auto-extracted to `seed_papers.csv` via `build_seed_csv.py` (PyMuPDF + CrossRef)
+- `query_refinement.ipynb` tests three complementary methods against the seed set:
+  - **BM25** — term-frequency ranking with length normalisation
+  - **KeyBERT + YAKE** — keyphrase extraction to surface new vocabulary for `search_strategy.py`
+  - **SPECTER** — semantic similarity to catch conceptually related papers using different terminology
+- Findings from this step feed back into `search_strategy.py` before the full database run
 
-### Milestone 3: Additional Databases
-- ⏳ SCOPUS — pipeline built in `scopus.ipynb` (`pybliometrics`, `TITLE-ABS-KEY` query); needs a full run on an institutional token for abstracts
-- ⏳ Google Scholar — in progress via `scholarly` (see `google_scholar.ipynb`); supplementary source only
-- ⏳ EMBASE — query builder + export loader in `embase.ipynb`; no open API, so it uses a manual Embase/Ovid export workflow (coordinate Emtree terms with Malcolm & Lukas)
-- ⏳ Web of Science — pipeline built in `web_of_science.ipynb` (WoS Starter API, `TS=()` query); pending institutional API key
+### Milestone 3: Additional Databases ⏳
+- **SCOPUS** — `scopus.ipynb` uses `elsapy` with year-by-year splitting to stay within the free-tier 5,000-record cap; set `SUBSCRIBER_ACCESS = True` once an InstToken is available for full pagination + abstracts
+- **EMBASE** — `embase.ipynb` uses the Embase Search API (same Elsevier key); coordinate Emtree term mapping with Malcolm & Lukas
+- **Web of Science** — `web_of_science.ipynb` uses the WoS Starter API (`TS=` query); pending institutional `WOS_API_KEY`
+- **Google Scholar** — `google_scholar.ipynb` via `scholarly`; supplementary source only
 
-### Milestone 4: Analysis & Protocol
-- ⬜ Cross-database deduplication
-- ⬜ Formal screening protocol (title/abstract → full-text → risk of bias)
-- ⬜ Data extraction and synthesis
+### Milestone 4: Pre-screening ⬜
+- SPECTER/BM25 similarity filter against seed embeddings → cheap first pass
+- LLM structured screening (Ollama, local, no API key) on survivors → `prescreen.ipynb`; PICO-style prompts, temperature=0 for reproducibility
 
----
-
-## Search Strategy
-
-All criteria live in [`search_strategy.py`](search_strategy.py) — edit there to keep every notebook in sync.
-
-| Parameter | Summary |
-|---|---|
-| Date range | 2020-01-01 to 2025-12-31 |
-| Disease | Parkinson's disease, neurodegenerative disease (+ NLP-expanded alternates) |
-| Spatial | geospatial, spatiotemporal, geographic, environment*, atmospheric, … |
-| Exposure | pollution, air pollution, pesticide, particulate matter, NO2, trichloroethylene, … |
-| Exclusions | animal/in vitro/molecular studies; treatment/therapy-focused research |
+### Milestone 5: Synthesis ⬜
+- Cross-database deduplication
+- Formal title/abstract → full-text → risk-of-bias screening protocol
+- Data extraction and synthesis
 
 ---
 
 ## Project Structure
 
 ```
-search_strategy.py          — centralized inclusion/exclusion criteria and DB configs
-pubmed.ipynb                — PubMed collection, cleaning, NLP term analysis
-google_scholar.ipynb        — Google Scholar collection via scholarly (supplementary)
-scopus.ipynb                — SCOPUS collection via pybliometrics (TITLE-ABS-KEY query)
-embase.ipynb                — EMBASE query builder + RIS/CSV export loader (manual export workflow)
-web_of_science.ipynb        — Web of Science collection via the WoS Starter API (TS= query)
-prescreen.ipynb             — (planned) Ollama LLM pre-screening of records
-SCOPUS_exploration.ipynb    — early SCOPUS API setup scratchpad (superseded by scopus.ipynb)
+search_strategy.py               — inclusion/exclusion criteria and DB configs (edit here, nowhere else)
+build_seed_csv.py                — extracts metadata from PDFs in seed_papers/ → seed_papers.csv
+seed_papers/                     — downloaded PDFs of confirmed-relevant seed papers
+seed_papers.csv                  — seed paper metadata (title, abstract, DOI, authors, …)
+pubmed.ipynb                     — PubMed collection, cleaning, TF-IDF term analysis
+query_refinement.ipynb           — BM25 / KeyBERT+YAKE / SPECTER ranking against seed set
+scopus.ipynb                     — SCOPUS collection via elsapy (year-by-year, free-tier safe)
+embase.ipynb                     — EMBASE collection via Embase Search API
+web_of_science.ipynb             — Web of Science collection via WoS Starter API
+google_scholar.ipynb             — Google Scholar scrape via scholarly (supplementary)
+prescreen.ipynb                  — (planned) Ollama LLM pre-screening
 pubmed_results_cleaned_2026.csv  — cleaned PubMed results (411 articles)
-requirements.txt            — Python dependencies
-archive/                    — superseded notebooks (pubmed_pull, pubmed_exploration)
+requirements.txt                 — Python dependencies
+archive/                         — superseded notebooks
 ```
 
 ---
 
 ## How to Run
 
-**Prerequisites:** Python 3, a `.env` file with `PUBMED_EMAIL=your@email.com` (and
-`WOS_API_KEY=...` once Web of Science access is granted), a configured Elsevier API key for
-SCOPUS (`pybliometrics.init()`), and [Ollama](https://ollama.ai) installed locally for the
-pre-screening step.
+**Prerequisites:** Python 3, `.env` with `PUBMED_EMAIL`, `ELSEVIER_API_KEY`, `ELSEVIER_INSTTOKEN` (optional, for subscriber access), and `WOS_API_KEY` (once granted).
 
 ```bash
 pip install -r requirements.txt
 ```
 
-1. **Collection & NLP** — run `pubmed.ipynb` top-to-bottom. It builds the query from
-   `search_strategy.py`, fetches and cleans results, exports to CSV, and runs the TF-IDF
-   term-ranking analysis.
+Run in order:
 
-2. **Google Scholar (supplementary)** — run `google_scholar.ipynb`. Uses the `scholarly`
-   package to scrape Scholar (no API key needed). Note: Google rate-limits scrapers, so
-   results may be partial without a proxy — the notebook handles this gracefully.
+1. `pubmed.ipynb` — collect and clean PubMed results
+2. `build_seed_csv.py` — generate `seed_papers.csv` from PDFs in `seed_papers/`
+3. `query_refinement.ipynb` — test methods, extract new vocabulary, update `search_strategy.py`
+4. `scopus.ipynb` / `embase.ipynb` / `web_of_science.ipynb` / `google_scholar.ipynb` — collect from remaining databases
+5. `prescreen.ipynb` — LLM pre-screening (in development)
 
-3. **SCOPUS** — run `scopus.ipynb`. It builds the `TITLE-ABS-KEY` query from `search_strategy.py`,
-   queries the SCOPUS API via `pybliometrics`, cleans, and exports `scopus_results_2026.csv`.
-   Use the `COMPLETE` view on an institutional token to also capture abstracts.
-
-4. **EMBASE** — run `embase.ipynb`. EMBASE has no open API, so the notebook prints the query in
-   Ovid (`.ti,ab.`) and Embase.com (`:ti,ab`) syntax to paste into the platform, then loads the
-   exported RIS/CSV back into the shared schema and exports `embase_results_2026.csv`.
-
-5. **Web of Science** — run `web_of_science.ipynb`. It builds the `TS=()` query, pages through the
-   WoS Starter API (reads `WOS_API_KEY` from `.env`), cleans, and exports
-   `web_of_science_results_2026.csv`.
-
-6. **Pre-screening** — run `prescreen.ipynb` (in development). It loads the cleaned CSV,
-   sends each title + abstract to a local Ollama model, and outputs include/exclude decisions
-   with rationale. No API key or internet connection required.
-
-7. **Adjust the search** — edit `search_strategy.py` (`INCLUSION_CRITERIA`, `ALTERNATE_TERMS`,
-   `EXCLUSION_TERMS`, `DATE_FILTER`) and re-run the affected collection notebooks. Every database
-   notebook imports from `search_strategy.py`, so one edit keeps them all in sync.
-
----
-
-## Next Steps
-
-1. **LLM pre-screening** — implement `prescreen.ipynb` with Ollama for PubMed results.
-2. **SCOPUS run** — execute `scopus.ipynb` on an institutional token (`COMPLETE` view) to capture abstracts.
-3. **EMBASE** — expand pollution/geo + Emtree terms with Malcolm & Lukas; secure Embase/Ovid access, then run the export through `embase.ipynb`.
-4. **Web of Science** — obtain the institutional `WOS_API_KEY` and run `web_of_science.ipynb`.
-5. **Deduplication** — merge and deduplicate across all databases once SCOPUS/EMBASE/WoS are queried.
-6. **Screening protocol** — formal title/abstract and full-text review workflow.
+To adjust the search: edit `search_strategy.py` and re-run the relevant notebooks — everything imports from there.
