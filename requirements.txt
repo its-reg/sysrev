@@ -13,3 +13,8 @@ scholarly
 pybliometrics
 elsapy
 requests
+pymupdf
+rank-bm25
+sentence-transformers
+keybert
+yake
