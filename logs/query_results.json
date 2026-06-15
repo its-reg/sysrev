@@ -1,0 +1,47 @@
+{
+  "_note": "Query run log for the systematic review. Add a new entry each time a database is queried.",
+  "pubmed": [
+    {
+      "date_queried": "2025-04-22",
+      "query_version": "initial narrow query — 'parkinson* disease' AND ('geospatial' OR 'environment' OR 'exposures')",
+      "total_returned": 326,
+      "last_5_years": 138,
+      "after_cleaning": 154,
+      "after_screening": 153,
+      "notes": "Exploratory run; formed basis of seed set"
+    },
+    {
+      "date_queried": "2026-06-11",
+      "query_version": "expanded query — TF-IDF-informed terms added to search_strategy.py",
+      "total_returned": 500,
+      "within_date_window": 416,
+      "after_cleaning": 411,
+      "output_file": "pubmed_results_cleaned_2026.csv",
+      "notes": "Current working corpus"
+    }
+  ],
+  "scopus": [
+    {
+      "date_queried": null,
+      "status": "not yet queried — pending institutional InstToken for full access"
+    }
+  ],
+  "embase": [
+    {
+      "date_queried": null,
+      "status": "not yet queried — pending Emtree term coordination with Malcolm & Lukas"
+    }
+  ],
+  "web_of_science": [
+    {
+      "date_queried": null,
+      "status": "not yet queried — pending institutional WOS_API_KEY"
+    }
+  ],
+  "google_scholar": [
+    {
+      "date_queried": null,
+      "status": "not yet queried"
+    }
+  ]
+}
