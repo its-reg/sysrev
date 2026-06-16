@@ -25,6 +25,22 @@ Sections
 #    set INCLUDE_ALTERNATE_TERMS = False to use these alone.
 # =============================================================================
 
+## Lukas said to exclude papers that don't have a map or visual coverage of an area
+## compare against the journals' name (if it's not geo, flag as lower confidence)
+
+INITIAL_CRITERIA = {
+    "disease": [
+        "parkinson* disease",
+    ],
+    "spatial": [
+        "geospatial",
+        "geographic",
+    ],
+    "exposure": [
+        "environment",
+    ],
+}
+
 INCLUSION_CRITERIA = {
     "disease": [
         "parkinson* disease",
