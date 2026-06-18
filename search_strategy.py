@@ -25,9 +25,6 @@ Sections
 #    set INCLUDE_ALTERNATE_TERMS = False to use these alone.
 # =============================================================================
 
-## Lukas said to exclude papers that don't have a map or visual coverage of an area
-## compare against the journals' name (if it's not geo, flag as lower confidence)
-
 INITIAL_CRITERIA = {
     "disease": [
         "parkinson* disease",
@@ -43,27 +40,61 @@ INITIAL_CRITERIA = {
 
 INCLUSION_CRITERIA = {
     "disease": [
+        "parkinson*",
         "parkinson* disease",
-        "neurodegenerative disease",
     ],
     "spatial": [
-        "geospatial",
-        "spatial dependence",
-        "spatiotemporal",
-        "geographic",
+        "geospatial*",
+        "geograph*",
         "environment*",
-        "atmospheric",
-        "spatial analysis",
+        "spatiotemporal",
+        "spatial*",
+        "GIS",
+        "geographic information systems",
+        "spatial interpolation",
+        "spatial epidemiology",
+        "remote sens*",
+        "latitude",
+        "longitude",
+        "clustering",
+        "residence",
+        "administrative division",
+        "drone",
+        "imagery",
+        "landsat",
+        "map",
+        "mapping",
+        "modis",
+        "satellite",
+        "sentinel",
+        "topologic*"
     ],
     "exposure": [
-        "pollution",
+        "pollut*",
         "chemical",
-        "pesticide",
+        "pesticide*",
         "air pollution",
         "microplastic pollution",
         "traffic pollution",
         "water pollution",
         "trichloroethylene",
+        "air quality",
+        "exposure",
+        "environment*",
+        "particulate*",
+        "atmospher*",
+        "carbon",
+        "humidity",
+        "meteorologic*",
+        "nitrogen*",
+        "ozone",
+        "PM2*",
+        "PM10*",
+        "surface pressure",
+        "temperature",
+        "heavy metals",
+        "ambient air pollution",
+        "long*term exposure",
     ],
 }
 
@@ -81,30 +112,24 @@ INCLUSION_CRITERIA = {
 
 ALTERNATE_TERMS = {
     "disease": [
-        "movement disorders",
-        "extrapyramidal disorders",
-        "dementia",
-        "alzheimer*",
-        "cognitive impairment",
-        "amyotrophic lateral sclerosis",
+        "MSA",
+        "multiple system atrophy",
+        "DLB",
+        "dementia with lewy bodies",
+        "PSP",
+        "progressive supranuclear palsy",
+        "CBS",
+        "corticobasal syndrome",
+        "CBD",
+        "corticobasal degeneration",
+        "synucleinopath*",
+        "synuclein*",
     ],
     "spatial": [
-        "geospatial analysis",
-        "geographic information systems",
-        "GIS",
-        "spatial epidemiology",
+
     ],
     "exposure": [
-        "air quality",
-        "environmental exposure",
-        "occupational exposure",
-        "heavy metals",
-        "pesticide exposure",
-        "particulate matter",
-        "nitrogen dioxide",
-        "ambient air pollution",
-        "long-term exposure",
-        "air pollution exposure",
+
     ],
 }
 
