@@ -40,17 +40,16 @@ INITIAL_CRITERIA = {
 
 INCLUSION_CRITERIA = {
     "disease": [
-        "parkinson*",
-        "parkinson* disease",
+        "parkinson*"[Title],
     ],
     "spatial": [
+        "environment*",
         "geospatial*",
         "geograph*",
-        "environment*",
-        "spatiotemporal",
-        "spatial*",
         "GIS",
         "geographic information systems",
+        "spatiotemporal",
+        "spatial analysis",
         "spatial interpolation",
         "spatial epidemiology",
         "remote sens*",
@@ -67,7 +66,8 @@ INCLUSION_CRITERIA = {
         "modis",
         "satellite",
         "sentinel",
-        "topologic*"
+        "topolog*",
+        "altitude",
     ],
     "exposure": [
         "pollut*",
@@ -88,13 +88,14 @@ INCLUSION_CRITERIA = {
         "meteorologic*",
         "nitrogen*",
         "ozone",
-        "PM2*",
-        "PM10*",
+        "PM2.5",
+        "PM10",
         "surface pressure",
         "temperature",
         "heavy metals",
         "ambient air pollution",
         "long*term exposure",
+        "longitudinal",
     ],
 }
 
@@ -149,13 +150,11 @@ NLP_SUGGESTED_EXPANSIONS = [
 # =============================================================================
 
 EXCLUSION_TERMS = [
-    # Mechanism / physiology / clinical focus
     "pathology", "treatment", "therapy", "intervention",
-    "physiology", "monitoring", "biosensor",
-    # Experimental systems
+    "physiology", "monitoring", "biosensor","pathophysiology", "diagnosis", "prognosis",
     "animal", "plant", "in vitro", "molecular", "protein", "mice",
-    # Off-topic conditions or study types
-    "parkinson* disease model", "respiratory", "resistance training", "aggression",
+    "parkinson* disease model", "respiratory", "resistance training", "aggression","visual","qualitative",
+    "genetic", "epigenetic", "gene", "genome",
 ]
 
 
