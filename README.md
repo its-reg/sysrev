@@ -38,12 +38,25 @@ flowchart TD
 - `build_seed_csv.py` extracts metadata from the PDFs (PyMuPDF + CrossRef) → `seed_papers.csv`
 
 ### Milestone 2: Search Strategy Refinement ⏳
-- TF-IDF analysis on the initial corpus surfaced new terms → folded into `search_strategy.py`
-- `query_refinement.ipynb` is testing three stronger methods against the seed set:
-  - **BM25** — term-frequency ranking with length normalisation
-  - **KeyBERT + YAKE** — keyphrase extraction to surface new vocabulary
-  - **SPECTER** — semantic similarity to catch papers using different terminology for the same concepts
-- Findings feed back into `search_strategy.py` before the full multi-database run
+- **Iterative term expansion & refinement workflow** (`query_refinement.ipynb`):
+  - **Method 1: TF-IDF** — corpus-level term ranking + cosine similarity to seed query
+  - **Method 2: BM25** — probabilistic term-frequency ranking with length normalisation
+  - **Method 3: KeyBERT + YAKE** — keyphrase extraction to surface new vocabulary from seed abstracts
+  - **Method 4: SPECTER** — semantic similarity embeddings to find papers using different terminology
+  - All methods ranked papers against 55 confirmed-relevant seed papers to identify top-ranked *and* outlier papers
+  
+- **Outlier analysis** — papers furthest from seed set (low SPECTER similarity):
+  - Extracted top terms from outlier papers using TF-IDF
+  - Compared against existing INCLUSION_CRITERIA, ALTERNATE_TERMS, and EXCLUSION_TERMS
+  - Identified new exclusion candidates (high-frequency terms in outliers NOT already in strategy)
+  - **Exclusion criteria building**: Terms flagged as noise/irrelevant were added to `EXCLUSION_TERMS` in `search_strategy.py`
+  
+- **Output files**:
+  - `query_refinement_ranked.csv` — papers ranked by combined BM25 + SPECTER score
+  - `csv-parkinsonT-set_SPECTER.csv` — SPECTER-ranked papers for further review
+  - `csv-parkinsonT-set_SPECTER_FULL.csv` — full paper metadata (title, abstract, authors, journal, DOI) fetched from PubMed for top-ranked papers
+  
+- New terms and refined exclusion criteria feed back into `search_strategy.py` before the full multi-database run
 
 ### Milestone 3: Expanded PubMed Collection ✅
 - Expanded query (TF-IDF-informed terms) → 411 cleaned articles → `pubmed_results_cleaned_2026.csv`
@@ -73,7 +86,9 @@ build_seed_csv.py                — extracts metadata from PDFs in seed_papers/
 seed_papers/                     — downloaded PDFs of confirmed-relevant seed papers
 seed_papers.csv                  — seed paper metadata (title, abstract, DOI, authors, …)
 pubmed.ipynb                     — PubMed collection, cleaning, TF-IDF term analysis
-query_refinement.ipynb           — BM25 / KeyBERT+YAKE / SPECTER ranking against seed set
+query_refinement.ipynb           — BM25 / KeyBERT+YAKE / SPECTER ranking & outlier analysis for term refinement
+  → query_refinement_ranked.csv  — papers ranked by combined BM25 + SPECTER similarity
+  → csv-parkinsonT-set_SPECTER_FULL.csv — full papers (title, abstract, authors, journal) fetched from PubMed
 scopus.ipynb                     — SCOPUS collection via elsapy
 embase.ipynb                     — EMBASE collection via Embase Search API
 web_of_science.ipynb             — Web of Science collection via WoS Starter API
@@ -94,10 +109,27 @@ archive/                         — superseded notebooks
 pip install -r requirements.txt
 ```
 
-1. `build_seed_csv.py` — generate `seed_papers.csv` from PDFs in `seed_papers/`
-2. `query_refinement.ipynb` — test refinement methods, update `search_strategy.py` with new terms
-3. `pubmed.ipynb` — re-run with updated query to collect the full corpus
-4. `scopus.ipynb` / `embase.ipynb` / `web_of_science.ipynb` / `google_scholar.ipynb` — collect from remaining databases
+### Iterative Workflow:
+
+1. **Build seed set** — `build_seed_csv.py` generates `seed_papers.csv` from PDFs in `seed_papers/`
+
+2. **Refine search strategy** (`query_refinement.ipynb`):
+   - Loads seed papers and the current search corpus
+   - Ranks papers using four complementary methods (TF-IDF, BM25, KeyBERT+YAKE, SPECTER)
+   - **Key analysis**: Identifies outlier papers (papers dissimilar to seed set)
+     - Extracts top terms from outliers
+     - Compares against existing INCLUSION_CRITERIA, ALTERNATE_TERMS, EXCLUSION_TERMS
+     - Flags new candidate exclusion terms
+   - **Review findings**: Decide which new terms to add to `search_strategy.py` based on outlier inspection
+   - **Output**: `query_refinement_ranked.csv` for offline review; `csv-parkinsonT-set_SPECTER_FULL.csv` with full PubMed metadata
+
+3. **Update search criteria** — edit `search_strategy.py` to:
+   - Add new high-value terms to INCLUSION_CRITERIA or ALTERNATE_TERMS (from top-ranked papers)
+   - Add noise terms to EXCLUSION_TERMS (from outlier analysis)
+
+4. **Collect expanded results** (`pubmed.ipynb`) — re-run with updated query to collect full corpus
+
+5. **Collect from additional databases** — `scopus.ipynb` / `embase.ipynb` / `web_of_science.ipynb` / `google_scholar.ipynb`
 5. `prescreen.ipynb` — LLM pre-screening *(in development)*
 
 To adjust the search: edit `search_strategy.py` and re-run the relevant notebooks.

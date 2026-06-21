@@ -40,7 +40,7 @@ INITIAL_CRITERIA = {
 
 INCLUSION_CRITERIA = {
     "disease": [
-        "parkinson*"[Title],
+        "parkinson*",
     ],
     "spatial": [
         "environment*",
@@ -113,24 +113,24 @@ INCLUSION_CRITERIA = {
 
 ALTERNATE_TERMS = {
     "disease": [
-        "MSA",
         "multiple system atrophy",
-        "DLB",
         "dementia with lewy bodies",
-        "PSP",
         "progressive supranuclear palsy",
-        "CBS",
         "corticobasal syndrome",
-        "CBD",
         "corticobasal degeneration",
         "synucleinopath*",
         "synuclein*",
     ],
     "spatial": [
-
+        "environmental",
     ],
     "exposure": [
-
+        "pesticides",
+        "particulate matter",
+        "pesticide exposure",
+        "nitrogen dioxide",
+        "ambient air pollution",
+        "air pollution exposure",
     ],
 }
 
@@ -144,7 +144,6 @@ NLP_SUGGESTED_EXPANSIONS = [
     "amyotrophic lateral sclerosis", "air pollution exposure",
 ]
 
-
 # =============================================================================
 # 3. EXCLUSION TERMS
 # =============================================================================
@@ -155,7 +154,9 @@ EXCLUSION_TERMS = [
     "animal", "plant", "in vitro", "molecular", "protein", "mice",
     "parkinson* disease model", "respiratory", "resistance training", "aggression","visual","qualitative",
     "genetic", "epigenetic", "gene", "genome",
+    "depression", "dementia", "coffee", "gut", "metabolites", "mercury", "dysphagia", "alzheimer*",
 ]
+# bottom line came from TF-IDF and SPECTER
 
 
 # =============================================================================
